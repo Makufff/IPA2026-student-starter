@@ -46,10 +46,17 @@ def _default_get_config(router, filter_xml):
 
 
 def _default_edit_config(router, config_xml):
+    # IOS XE accepts a Loopback "replace" that changes the primary IPv4 but
+    # never applies the new address to the running config, so merge the
+    # address in first, then replace to remove stale description/shutdown.
+    merge_xml = config_xml.replace(' nc:operation="replace"', "").replace(
+        "<shutdown/>", ""
+    )
     with _connect(router) as session:
-        reply = session.edit_config(target="running", config=config_xml)
-        if not reply.ok:
-            raise RuntimeError(str(reply.error))
+        for xml in (merge_xml, config_xml):
+            reply = session.edit_config(target="running", config=xml)
+            if not reply.ok:
+                raise RuntimeError(str(reply.error))
 
 
 def _error(code):
