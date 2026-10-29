@@ -79,13 +79,7 @@ class WebexEventHandler:
             logger.warning("Message %s has no roomId; ignoring", message_id)
             return None
 
-        try:
-            result = self._process_message(message)
-        except Exception:
-            # Still answer the room, then let the caller log the failure.
-            self._reply_failure(room_id, message_id)
-            raise
-
+        result = self._process_message(message)
         self.client.send_message(room_id, json.dumps(result))
         logger.info(
             "Message %s: %s/%s",
@@ -126,13 +120,6 @@ class WebexEventHandler:
             logger.error("Processor returned an invalid response: %r", result)
             return dict(BACKEND_FAILED)
         return result
-
-    def _reply_failure(self, room_id, message_id):
-        logger.error("Processing message %s failed; replying backend_failed", message_id)
-        try:
-            self.client.send_message(room_id, json.dumps(BACKEND_FAILED))
-        except Exception:
-            logger.exception("Could not send failure reply for message %s", message_id)
 
 
 def make_http_handler(submit_event):
@@ -277,7 +264,13 @@ class SequentialEventQueue:
 
 
 def resolve_bot_person_id(client):
-    person = client.get_me()
+    response = client.session.get(
+        f"{WEBEX_API_BASE}/people/me",
+        headers=client.headers,
+        timeout=10,
+    )
+    response.raise_for_status()
+    person = response.json()
     person_id = person.get("id") if isinstance(person, dict) else None
     if not isinstance(person_id, str) or not person_id:
         raise RuntimeError(f"{WEBEX_API_BASE}/people/me returned no person id")
@@ -304,7 +297,9 @@ def main():
     except KeyboardInterrupt:
         pass
     finally:
-        server.server_close()
+        close = getattr(server, "server_close", None)
+        if close is not None:
+            close()
         queue.shutdown()
 
 

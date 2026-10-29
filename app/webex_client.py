@@ -37,10 +37,6 @@ class WebexClient:
     def get_message(self, message_id):
         return self._get(f"{WEBEX_API_BASE}/messages/{message_id}").json()
 
-    def get_me(self):
-        """Return the bot's own person record (GET /v1/people/me)."""
-        return self._get(f"{WEBEX_API_BASE}/people/me").json()
-
     def download_file(self, file_url):
         return self._get(file_url).content
 
