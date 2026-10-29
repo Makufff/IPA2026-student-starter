@@ -1,0 +1,6 @@
+target: core
+request: 20-status-ignores-extra-values.yaml
+
+expected:
+  status: ok
+  result: accepted

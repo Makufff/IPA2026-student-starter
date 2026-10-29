@@ -1,0 +1,7 @@
+fixture: 09-no-change-down.yaml
+
+expected:
+  status: ok
+  result: planned
+  operation: no_change
+  changes: {}

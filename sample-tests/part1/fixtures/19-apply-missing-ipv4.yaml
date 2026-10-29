@@ -1,0 +1,9 @@
+version: 1
+router: 10.0.29.103
+method: ansible
+action: apply
+desired:
+  interface:
+    name: Loopback67070067
+    description: IPA2026-67070067
+    admin_state: up

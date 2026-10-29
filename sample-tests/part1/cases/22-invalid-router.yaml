@@ -1,0 +1,6 @@
+target: core
+request: 22-invalid-router.yaml
+
+expected:
+  status: error
+  result: invalid_router

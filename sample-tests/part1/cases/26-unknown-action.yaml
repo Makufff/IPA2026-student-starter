@@ -1,0 +1,6 @@
+target: core
+request: 26-unknown-action.yaml
+
+expected:
+  status: error
+  result: invalid_action

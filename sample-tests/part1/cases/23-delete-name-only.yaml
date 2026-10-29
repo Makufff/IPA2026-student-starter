@@ -1,0 +1,6 @@
+target: core
+request: 23-delete-name-only.yaml
+
+expected:
+  status: ok
+  result: accepted

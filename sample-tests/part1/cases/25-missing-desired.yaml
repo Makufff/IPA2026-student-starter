@@ -1,0 +1,6 @@
+target: core
+request: 25-missing-desired.yaml
+
+expected:
+  status: error
+  result: missing_desired
