@@ -2,8 +2,6 @@
 
 import os
 
-from urllib.parse import quote
-
 import requests
 
 WEBEX_API_BASE = 'https://webexapis.com/v1'
@@ -37,9 +35,7 @@ class WebexClient:
         return response
 
     def get_message(self, message_id):
-        # Quote the ID so an event can only ever address one message.
-        url = f"{WEBEX_API_BASE}/messages/{quote(str(message_id), safe='')}"
-        return self._get(url).json()
+        return self._get(f"{WEBEX_API_BASE}/messages/{message_id}").json()
 
     def get_me(self):
         """Return the bot's own person record (GET /v1/people/me)."""
